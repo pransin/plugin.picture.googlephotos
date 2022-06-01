@@ -99,25 +99,25 @@
     </category>
     <category id="signin" label="30100" help="">
       <group id="4" label="">
-        <setting id="baseUrl" type="urlencodedstring" label="30101" help="">
+        <setting id="baseUrl" type="string" label="30101" help="">
           <level>3</level>
           <default>https://photos-kodi-login.herokuapp.com</default>
           <constraints>
             <allowempty>false</allowempty>
           </constraints>
-          <control type="edit" format="urlencoded"></control>
+          <control type="edit" format="string"></control>
         </setting>
 
-        <setting id="deviceCodeUrl" type="urlencodedstring" label="30102" help="">
+        <setting id="deviceCodeUrl" type="string" label="30102" help="">
           <level>3</level>
           <default>/device/code</default>
           <constraints>
             <allowempty>false</allowempty>
           </constraints>
-          <control type="edit" format="urlencoded"></control>
+          <control type="edit" format="string"></control>
         </setting>
 
-        <setting id="tokenUrl" type="urlencodedstring" label="30103" help="">
+        <setting id="tokenUrl" type="string" label="30103" help="">
           <level>3</level>
           <default>/token</default>
           <constraints>
@@ -126,13 +126,13 @@
           <control type="edit" format="urlencoded"></control>
         </setting>
 
-        <setting id="refreshUrl" type="urlencodedstring" label="30104" help="">
+        <setting id="refreshUrl" type="string" label="30104" help="">
           <level>3</level>
           <default>/refresh</default>
           <constraints>
             <allowempty>false</allowempty>
           </constraints>
-          <control type="edit" format="urlencoded"></control>
+          <control type="edit" format="string"></control>
         </setting>
       </group>
     </category>

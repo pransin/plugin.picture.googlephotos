@@ -12,6 +12,7 @@ import xbmcgui
 import xbmcplugin
 import threading
 import datetime
+import traceback
 
 
 from resources.lib.auth import read_credentials, get_device_code
@@ -349,6 +350,7 @@ if mode is None:
         try:
             creds = read_credentials(file)
         except:
+            xbmc.log(str(traceback.format_exc()), xbmc.LOGDEBUG)
             err_dialog = xbmcgui.Dialog()
             err_dialog.notification(__addon__.getLocalizedString(30411),
                                     __addon__.getLocalizedString(30422),
