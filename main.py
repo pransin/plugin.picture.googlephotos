@@ -55,28 +55,25 @@ def new_account():
     init_time = datetime.datetime.utcnow()
     min_time_to_refresh = (
         100 / code_json["expires_in"]) * code_json['interval']
-    login_dialog.update(100, message=dialog_msg + code_json["userCode"])
+    login_dialog.update(100, message=dialog_msg +
+                        f'[COLOR red][B]{code_json["userCode"]}[/B][/COLOR]')
 
     # Update progress dialog indicating time left for complete
     sleep_time = code_json['interval'] * 1000
     time = 99
-    while True:
+    while not login_dialog.iscanceled():
         login_dialog.update(time)
-        if login_dialog.iscanceled():
-            break
         xbmc.sleep(sleep_time)
         status_code = auth.fetch_and_save_token(
             code_json['deviceCode'], token_folder)
         if status_code == 200:
-            xbmc.executebuiltin(
-                f'Notification({__addon__.getLocalizedString(30402)}, time=3000)')
+            xbmcgui.Dialog().notification(__addon__.getLocalizedString(30424),
+                                          __addon__.getLocalizedString(30402), xbmcgui.NOTIFICATION_INFO, 3000)
             break
-        if status_code == 403:
-            xbmc.sleep(10000)
-        elif status_code != 202:
-            xbmc.log(str(status_code), xbmc.LOGDEBUG)
+        if status_code == 403:      # 403 indicates rate limiting
+            xbmc.sleep(sleep_time)
         time = int((1 - (datetime.datetime.utcnow() -
-                         init_time).total_seconds() / code_json["expires_in"]) * 100)
+                   init_time).total_seconds() / code_json["expires_in"]) * 100)
         login_dialog.update(time)
 
         if time <= min_time_to_refresh or status_code == 400:
@@ -85,10 +82,10 @@ def new_account():
                 100 / code_json["expires_in"]) * code_json['interval']
             init_time = datetime.datetime.utcnow()
             sleep_time = code_json['interval'] * 1000
-            login_dialog.update(time, message=dialog_msg +
-                                code_json["userCode"])
-            xbmc.executebuiltin(
-                f'Notification({__addon__.getLocalizedString(30403)}, ,time=3000)')
+            login_dialog.update(100, message=dialog_msg +
+                                f'[COLOR red][B]{code_json["userCode"]}[/B][/COLOR]')
+            xbmcgui.Dialog().notification(__addon__.getLocalizedString(30424),
+                                          __addon__.getLocalizedString(30403), xbmcgui.NOTIFICATION_INFO, 3000)
             time = 100
     # except Exception as exec:
     # xbmc.log(str(exec), xbmc.LOGDEBUG)
@@ -208,8 +205,8 @@ def list_media():
             utils.storeData(path, media)
             result = [media]
         else:
-            xbmc.executebuiltin(
-                f'Notification({__addon__.getLocalizedString(30413)}, time=3000)')
+            xbmcgui.Dialog().notification(__addon__.getLocalizedString(30425),
+                                          __addon__.getLocalizedString(30413), xbmcgui.NOTIFICATION_INFO, 3000)
             return
     # List for media
     items = []
@@ -273,8 +270,8 @@ def create_media_list(media: dict):
 def play_video():
     # https://kodi.wiki/view/HOW-TO:Video_addon
     if args.get('status')[0] != 'READY':
-        xbmc.executebuiltin(
-            f'Notification({__addon__.getLocalizedString(30415)}, time=3000)')
+        xbmcgui.Dialog().notification(__addon__.getLocalizedString(30411),
+                                      __addon__.getLocalizedString(30415), xbmcgui.NOTIFICATION_ERROR, 3000)
     else:
         # Create a playable item with a path to play.
         play_item = xbmcgui.ListItem(path=args.get('path')[0])

@@ -17,7 +17,11 @@ def build_url(base_url, query: dict, qs=None) -> str:
         return base_url + '?' + parse.urlencode(qdict)
     return base_url + '?' + parse.urlencode(query)
 
-
+def join_path(*args):
+    '''
+    Joins path parts and strips extra slashes
+    '''
+    return '/'.join(s.strip('/') for s in args)
 def sleep_time(time=300):
     '''
     Input: Time to complete authentication

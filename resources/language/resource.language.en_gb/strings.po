@@ -27,14 +27,6 @@ msgctxt "#30104"
 msgid "Refresh Token Subroute"
 msgstr ""
 
-msgctxt "#30105"
-msgid "https://photoslibrary.googleapis.com/v1"
-msgstr ""
-
-msgctxt "#30106"
-msgid "https://openidconnect.googleapis.com/v1/userinfo"
-msgstr ""
-
 #cache file name
 msgctxt "#30107"
 msgid "media_db"
@@ -114,7 +106,7 @@ msgid "Authenticate"
 msgstr ""
 
 msgctxt "#30402"
-msgid "Success, Account added successfully"
+msgid "Account added successfully"
 msgstr ""
 
 msgctxt "#30403"
@@ -158,7 +150,7 @@ msgid "Error Code"
 msgstr ""
 
 msgctxt "#30413"
-msgid "No items, No Media Item to load"
+msgid "No Media Item to load"
 msgstr ""
 
 msgctxt "#30414"
@@ -166,7 +158,7 @@ msgid "Show more..."
 msgstr ""
 
 msgctxt "#30415"
-msgid "Error, Video is not ready for viewing yet"
+msgid "Video is not ready for viewing yet"
 msgstr ""
 
 msgctxt "#30416"
@@ -201,7 +193,13 @@ msgctxt "#30423"
 msgid "Loading..."
 msgstr ""
 
+msgctxt "#30424"
+msgid "Success"
+msgstr ""
 
+msgctxt "#30425"
+msgid "No items"
+msgstr ""
 #  No need most probably
 #  #  Content filter
 #  msgctxt "#30301"

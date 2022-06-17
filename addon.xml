@@ -27,7 +27,7 @@ The authentication server URL is specified in Settings / Expert / Sign-in Server
 The complete source code of the Sign-in Server can be download here: https://github.com/pransin/Device-Authorization-Grant-Proxy-Server
 You can clone the project and host it in your own server. 
     </disclaimer>
-    <license>	GPL-3.0-or-later</license>
+    <license>GPL-3.0-or-later</license>
     <assets>
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>

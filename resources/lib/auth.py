@@ -2,6 +2,7 @@ import datetime
 import time
 from pathlib import Path
 from . import config
+from resources.lib.utils import join_path
 import requests
 import json
 import xbmcaddon
@@ -23,8 +24,9 @@ __addon__ = xbmcaddon.Addon()
 def get_device_code():
     # On success, returns json containing user code, device code etc. and None on failure
     # Exception Possible
-    path = __addon__.getSettingString(
-        'baseUrl') + __addon__.getSettingString('deviceCodeUrl')
+    path = join_path(__addon__.getSettingString(
+        'baseUrl'), __addon__.getSettingString('deviceCodeUrl'))
+    print(path)
     res = requests.get(path)
     if res.status_code != 200:
         xbmc.log(f'GP: {str(res.status_code)}', xbmc.LOGDEBUG)
@@ -43,8 +45,8 @@ def fetch_and_save_token(device_code, tf_path):
     P.S. This function does not continously poll the auth server. It needs to be repeatedly called by the caller code.    
     '''
     pl_path = Path(tf_path)  # Pathlib path
-    token_url = __addon__.getSettingString(
-        'baseUrl') + __addon__.getSettingString('tokenUrl')
+    token_url = join_path(__addon__.getSettingString(
+        'baseUrl'), __addon__.getSettingString('tokenUrl'))
     res = requests.post(token_url, data={
                         'deviceCode': device_code, 'grant_type': 'urn:ietf:params:oauth:grant-type:device_code'})
     if res.status_code == 202 or res.status_code == 403:
@@ -82,8 +84,8 @@ def fetch_and_save_token(device_code, tf_path):
 
 def refresh_access_token(creds, path):
     # Returns new access token and expiry
-    refresh_url = __addon__.getSettingString(
-        'baseUrl') + __addon__.getSettingString('refreshUrl')
+    refresh_url = join_path(__addon__.getSettingString(
+        'baseUrl'), __addon__.getSettingString('refreshUrl'))
 
     res = requests.post(refresh_url, data={
         'refresh_token': creds["refresh_token"], 'grant_type': 'refresh_token'})
