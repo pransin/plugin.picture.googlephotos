@@ -200,6 +200,14 @@ msgstr ""
 msgctxt "#30425"
 msgid "No items"
 msgstr ""
+
+msgctxt "#30426"
+msgid "Expires in"
+msgstr ""
+
+msgctxt "#30427"
+msgid "seconds"
+msgstr ""
 #  No need most probably
 #  #  Content filter
 #  msgctxt "#30301"
