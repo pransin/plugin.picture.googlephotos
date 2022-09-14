@@ -1,3 +1,4 @@
+import json
 import sys
 import requests
 from pathlib import Path
@@ -89,6 +90,12 @@ def new_account():
 def remove_account():
     xbmcvfs.delete(str(token_path))
     xbmc.executebuiltin('Container.Refresh')
+
+
+def remove_all_accounts():
+    token_folder.mkdir(parents=True, exist_ok=True)
+    for file in token_folder.iterdir():
+        xbmcvfs.delete(str(file))
 
 
 def list_options():
@@ -327,54 +334,83 @@ def list_albums():
 
         xbmcplugin.endOfDirectory(addon_handle)
 
+# Modify this function to force changes after update
 
-if mode is None:
-    # Display logged in accounts
-    token_folder.mkdir(parents=True, exist_ok=True)
-    for file in token_folder.iterdir():
+
+def make_changes():
+    version_file = profile_path + 'info'
+    with open(version_file, 'w+') as file:
         try:
-            creds = read_credentials(file)
+            past_info = json.load(file)
         except:
-            xbmc.log(str(traceback.format_exc()), xbmc.LOGDEBUG)
-            err_dialog = xbmcgui.Dialog()
-            err_dialog.notification(__addon__.getLocalizedString(30411),
-                                    __addon__.getLocalizedString(30422),
-                                    xbmcgui.NOTIFICATION_ERROR, 3000)
-            exit()
-        email = creds["email"]
-        url = utils.build_url(
-            base_url, {'mode': 'list_options', 'token_filename': file.name})
-        li = xbmcgui.ListItem(email)
-        removePath = utils.build_url(
-            base_url, {'mode': 'remove_account', 'email': email, 'token_filename': file.name})
-        contextItems = [(__addon__.getLocalizedString(
-            30420), f'RunPlugin({removePath})')]
-        li.addContextMenuItems(contextItems)
+            past_info = {}
+
+    if bool(past_info) or past_info.get('version') != __addon__.getAddonInfo('version'):
+        past_info['version'] = __addon__.getAddonInfo('version')
+        __addon__.setSettingString(
+            "baseUrl", "https://photos-kodi-addon.onrender.com")
+        with open(version_file, 'w') as file:
+            json.dump(past_info, file, default=str)
+
+
+def display_page_content():
+    if mode is None:
+        # Display logged in accounts
+        token_folder.mkdir(parents=True, exist_ok=True)
+        for file in token_folder.iterdir():
+            try:
+                creds = read_credentials(file)
+            except:
+                xbmc.log(str(traceback.format_exc()), xbmc.LOGDEBUG)
+                err_dialog = xbmcgui.Dialog()
+                err_dialog.notification(__addon__.getLocalizedString(30411),
+                                        __addon__.getLocalizedString(30422),
+                                        xbmcgui.NOTIFICATION_ERROR, 3000)
+                exit()
+            email = creds["email"]
+            url = utils.build_url(
+                base_url, {'mode': 'list_options', 'token_filename': file.name})
+            li = xbmcgui.ListItem(email)
+            removePath = utils.build_url(
+                base_url, {'mode': 'remove_account', 'email': email, 'token_filename': file.name})
+            contextItems = [(__addon__.getLocalizedString(
+                30420), f'RunPlugin({removePath})')]
+            li.addContextMenuItems(contextItems)
+            xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
+                                        listitem=li, isFolder=True)
+        # Add Account Button
+        url = utils.build_url(base_url, {'mode': 'new_account'})
+        li = xbmcgui.ListItem(__addon__.getLocalizedString(30421))
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
-                                    listitem=li, isFolder=True)
-    # Add Account Button
-    url = utils.build_url(base_url, {'mode': 'new_account'})
-    li = xbmcgui.ListItem(__addon__.getLocalizedString(30421))
-    xbmcplugin.addDirectoryItem(handle=addon_handle, url=url,
-                                listitem=li)
-    xbmcplugin.endOfDirectory(addon_handle)
+                                    listitem=li)
+        xbmcplugin.endOfDirectory(addon_handle)
+    else:
+        # Read account credentials if present
+        if token_path and mode[0] != 'remove_account':
+            try:
+                creds = read_credentials(token_path)
+            except:
+                err_dialog = xbmcgui.Dialog()
+                err_dialog.notification(__addon__.getLocalizedString(30411),
+                                        __addon__.getLocalizedString(30422),
+                                        xbmcgui.NOTIFICATION_ERROR, 3000)
+                exit()
+            global token
+            token = creds["token"]
+        eval(mode[0] + '()')  # Fire up the actual function
+
+
+make_changes()
+# check for credentials
+if not __addon__.getSettingString('client_id') or not __addon__.getSettingString('client_secret'):
+    open_settings_dialog = xbmcgui.Dialog().ok(__addon__.getLocalizedString(30428),
+                                               __addon__.getLocalizedString(30429))
+    remove_all_accounts()
+    __addon__.openSettings()
 else:
-    # Read account credentials if present
-    if token_path and mode[0] != 'remove_account':
-        try:
-            creds = read_credentials(token_path)
-        except:
-            err_dialog = xbmcgui.Dialog()
-            err_dialog.notification(__addon__.getLocalizedString(30411),
-                                    __addon__.getLocalizedString(30422),
-                                    xbmcgui.NOTIFICATION_ERROR, 3000)
-            exit()
-        token = creds["token"]
-    eval(mode[0] + '()')  # Fire up the actual function
-
-
-# Updates:
+    display_page_content()
+    # Updates:
     # Slideshow
 
-# Not on list
+    # Not on list
     # Video seeking - Not possible due to API limitations
