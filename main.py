@@ -339,6 +339,7 @@ def list_albums():
 
 def make_changes():
     version_file = profile_path + 'info'
+    xbmcvfs.mkdirs(profile_path)
     with open(version_file, 'w+') as file:
         try:
             past_info = json.load(file)
