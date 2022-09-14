@@ -18,3 +18,6 @@ From zip
 2. Add-ons -> Install from zip file -> Locate the file -> Click OK.
 
 
+Note: Instructions to generate client credentials can be found at https://photos-kodi-addon.onrender.com/credentialsguide
+
+
